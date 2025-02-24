@@ -1,8 +1,9 @@
 "use client";
 
+import { z } from "zod";
+import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -15,25 +16,29 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
+
+import { useRegister } from "../api/use-register";
 
 const formSchema = z.object({
+  name: z.string().min(2, { message: "名称至少需要 2 个字符" }),
   email: z.string().email({ message: "请输入有效的邮箱地址" }),
   password: z.string().min(6, { message: "密码至少需要 6 个字符" }),
 });
 
-export function LoginForm() {
+export function RegisterForm() {
+  const { mutate: register } = useRegister();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: "",
       email: "",
+      password: "",
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    register({ json: values });
   }
 
   return (
@@ -43,13 +48,26 @@ export function LoginForm() {
         className={cn("flex flex-col gap-6")}
       >
         <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="text-2xl font-bold">欢迎回来</h1>
+          <h1 className="text-2xl font-bold">注册账号</h1>
           <p className="text-balance text-sm text-muted-foreground">
-            输入您的电子邮件以登录您的账户
+            欢迎使用熊熊助手
           </p>
         </div>
 
         <div className="grid gap-6">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>用户名</FormLabel>
+                <FormControl>
+                  <Input placeholder="请输入您的用户名" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="email"
@@ -105,9 +123,9 @@ export function LoginForm() {
           </Button>
         </div>
         <div className="text-center text-sm">
-          还没有账号?{" "}
-          <Link href={"/register"} className="underline underline-offset-4">
-            注册
+          已有账号?{" "}
+          <Link href={"/login"} className="underline underline-offset-4">
+            登录
           </Link>
         </div>
       </form>

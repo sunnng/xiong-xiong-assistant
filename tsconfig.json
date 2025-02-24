@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "target": "es6",
+    "downlevelIteration": true, // 兼容旧版迭代器
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,

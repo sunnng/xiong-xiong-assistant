@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 
+import { QueryProvider } from "@/components/query-provider";
+import { Toaster } from "@/components/ui/sonner";
+
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,8 +16,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`antialiased`}>{children}</body>
+    <html lang="zh-cn">
+      <body className="antialiased m-h-screen">
+        <Toaster />
+        <QueryProvider>{children}</QueryProvider>
+      </body>
     </html>
   );
 }
