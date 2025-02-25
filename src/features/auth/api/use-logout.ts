@@ -5,17 +5,17 @@ import { InferRequestType, InferResponseType } from "hono";
 
 import { client } from "@/lib/rpc";
 
-const $register = client.api.auth.register["$post"];
+const $logout = client.api.auth.logout["$post"];
 
-type RequestType = InferRequestType<typeof $register>;
-type ResponseType = InferResponseType<typeof $register, 200>;
+type RequestType = InferRequestType<typeof $logout>;
+type ResponseType = InferResponseType<typeof $logout, 200>;
 
-export const useRegister = () => {
+export const useLogout = () => {
   const router = useRouter();
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async (json) => {
-      const res = await $register(json);
+    mutationFn: async () => {
+      const res = await $logout();
 
       if (!res.ok) {
         const data = await res.json();

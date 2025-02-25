@@ -35,14 +35,36 @@ export const registerSchema = z.object({
 
   password: z
     .string()
-    .min(12, "密码至少需要 12 个字符")
+    .min(9, "密码至少需要 9 个字符")
     .max(100, "密码最多 100 个字符")
     .regex(/[A-Z]/, "需要至少一个大写字母")
     .regex(/[a-z]/, "需要至少一个小写字母")
     .regex(/\d/, "需要至少一个数字")
     .regex(/[\W_]/, "需要至少一个特殊符号")
     .refine(
-      (pwd) => calculateEntropy(pwd) >= 100,
+      (pwd) => calculateEntropy(pwd) >= 60,
+      "密码强度不足，请使用更复杂的组合"
+    )
+    .refine((pwd) => !/(.)\1{2,}/.test(pwd), "不允许连续重复字符 (如 aaa)"),
+});
+
+export const loginSchema = z.object({
+  email: z
+    .string()
+    .email("无效的邮箱格式")
+    .max(100, "邮箱最多 100 个字符")
+    .refine((val) => !val.endsWith("@example.com"), "禁止使用示例邮箱"),
+
+  password: z
+    .string()
+    .min(9, "密码至少需要 9 个字符")
+    .max(100, "密码最多 100 个字符")
+    .regex(/[A-Z]/, "需要至少一个大写字母")
+    .regex(/[a-z]/, "需要至少一个小写字母")
+    .regex(/\d/, "需要至少一个数字")
+    .regex(/[\W_]/, "需要至少一个特殊符号")
+    .refine(
+      (pwd) => calculateEntropy(pwd) >= 60,
       "密码强度不足，请使用更复杂的组合"
     )
     .refine((pwd) => !/(.)\1{2,}/.test(pwd), "不允许连续重复字符 (如 aaa)"),

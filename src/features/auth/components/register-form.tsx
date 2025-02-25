@@ -18,15 +18,12 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { useRegister } from "../api/use-register";
+import { registerSchema } from "../schemas";
 
-const formSchema = z.object({
-  name: z.string().min(2, { message: "名称至少需要 2 个字符" }),
-  email: z.string().email({ message: "请输入有效的邮箱地址" }),
-  password: z.string().min(6, { message: "密码至少需要 6 个字符" }),
-});
+const formSchema = registerSchema;
 
 export function RegisterForm() {
-  const { mutate: register } = useRegister();
+  const { mutate, isPending } = useRegister();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -38,7 +35,7 @@ export function RegisterForm() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    register({ json: values });
+    mutate({ json: values });
   }
 
   return (
@@ -104,8 +101,8 @@ export function RegisterForm() {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full">
-            登录
+          <Button type="submit" className="w-full" disabled={isPending}>
+            注册
           </Button>
           <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
             <span className="relative z-10 bg-background px-2 text-muted-foreground">
